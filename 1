@@ -1,0 +1,492 @@
+--PeterXHub
+
+
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/Kronos"))()
+
+local window = library:Window({
+   Title = "Peter X Hub [Beta]",
+   Accent = Color3.fromRGB(255,255,255),
+   Logo = 11270204562,
+   ToggleKey = Enum.KeyCode.LeftAlt
+})
+
+local tab = window:NewTab({
+   Logo = 11270204562
+})
+
+local tabsection = tab:TabSection({
+   Title = "Main"
+})
+
+local column = tabsection:AddColumn({
+   Title = "Farm"
+})
+
+local section = column:Section({
+   Title = "AutoFarm"
+})
+
+section:Toggle({
+   Text = "FarmBone[soon]",
+   State = false,
+   Callback = function(value) 
+_G.FarmBone = value
+
+end
+})
+
+section:Toggle({
+   Text = "FastAttack",
+   State = false,
+   Callback = function(value) 
+_G.FastAttackNormalSpeed = value
+local SeraphFrame = debug.getupvalues(require(game:GetService("Players").LocalPlayer.PlayerScripts:WaitForChild("CombatFramework")))[2]
+            local VirtualUser = game:GetService('VirtualUser')
+            local RigControllerR = debug.getupvalues(require(game:GetService("Players").LocalPlayer.PlayerScripts.CombatFramework.RigController))[2]
+            local Client = game:GetService("Players").LocalPlayer
+            local DMG = require(Client.PlayerScripts.CombatFramework.Particle.Damage)
+            
+            function SeraphFuckWeapon() 
+                local p13 = SeraphFrame.activeController
+                local wea = p13.blades[1]
+                if not wea then return end
+                while wea.Parent~=game.Players.LocalPlayer.Character do wea=wea.Parent end
+                return wea
+            end
+            
+            function getHits(Size)
+                local Hits = {}
+                local Enemies = workspace.Enemies:GetChildren()
+                local Characters = workspace.Characters:GetChildren()
+                for i=1,#Enemies do local v = Enemies[i]
+                    local Human = v:FindFirstChildOfClass("Humanoid")
+                    if Human and Human.RootPart and Human.Health > 0 and game.Players.LocalPlayer:DistanceFromCharacter(Human.RootPart.Position) < Size+5 then
+                        table.insert(Hits,Human.RootPart)
+                    end
+                end
+                for i=1,#Characters do local v = Characters[i]
+                    if v ~= game.Players.LocalPlayer.Character then
+                        local Human = v:FindFirstChildOfClass("Humanoid")
+                        if Human and Human.RootPart and Human.Health > 0 and game.Players.LocalPlayer:DistanceFromCharacter(Human.RootPart.Position) < Size+5 then
+                            table.insert(Hits,Human.RootPart)
+                        end
+                    end
+                end
+                return Hits
+            end
+            
+            task.spawn(
+                function()
+                while wait(0) do
+                    if  _G.FastAttackNormalSpeed then
+                        if SeraphFrame.activeController then
+                            -- if v.Humanoid.Health > 0 then
+                                SeraphFrame.activeController.timeToNextAttack = 0
+                                SeraphFrame.activeController.focusStart = 0
+                                SeraphFrame.activeController.hitboxMagnitude = 40
+                                SeraphFrame.activeController.humanoid.AutoRotate = true
+                                SeraphFrame.activeController.increment = 1 + 1 / 1
+                            -- end
+                        end
+                    end
+                end
+            end)
+            
+            function Boost()
+                spawn(function()
+                game:GetService("ReplicatedStorage").RigControllerEvent:FireServer("weaponChange",tostring(SeraphFuckWeapon()))
+                end)
+            end
+            
+            function Unboost()
+                spawn(function()
+                    game:GetService("ReplicatedStorage").RigControllerEvent:FireServer("unequipWeapon",tostring(SeraphFuckWeapon()))
+                end)
+            end
+            
+            local cdnormal = 0
+            local Animation = Instance.new("Animation")
+            local CooldownFastAttack = 0
+            Attack = function()
+                local ac = SeraphFrame.activeController
+                if ac and ac.equipped then
+                    task.spawn(
+                        function()
+                        if tick() - cdnormal > 0.5 then
+                            ac:attack()
+                            cdnormal = tick()
+                        else
+                             Animation.AnimationId = ac.anims.basic[2]
+                            ac.humanoid:LoadAnimation(Animation):Play(2, 2) --ท่าไม่ทำงานแก้เป็น (1,1)
+                            game:GetService("ReplicatedStorage").RigControllerEvent:FireServer("hit", getHits(120), 2, "")
+                        end
+                    end)
+                end
+            end
+            
+            b = tick()
+            spawn(function()
+                while wait(0) do
+                    if  _G.FastAttackNormalSpeed then
+                        if b - tick() > 0.75 then
+                            wait(.2)
+                            b = tick()
+                        end
+                        pcall(function()
+                            for i, v in pairs(game.Workspace.Enemies:GetChildren()) do
+                                if v.Humanoid.Health > 0 then
+                                    if (v.HumanoidRootPart.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude <= 40 then
+                                        Attack()
+                                        wait(0)
+                                        Boost()
+                                    end
+                                end
+                            end
+                        end)
+                    end
+                end
+            end)
+            
+            k = tick()
+            spawn(function()
+                while wait(0) do
+                    if  _G.FastAttackNormalSpeed then
+                        if k - tick() > 0.75 then
+                            wait(0)
+                            k = tick()
+                        end
+                        pcall(function()
+                            for i, v in pairs(game.Workspace.Enemies:GetChildren()) do
+                                if v.Humanoid.Health > 0 then
+                                    if (v.HumanoidRootPart.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude <= 40 then
+                                    wait(0)
+                                    Unboost()
+                                    end
+                                end
+                            end
+                        end)
+                    end
+                end
+            end)
+            
+            tjw1 = true
+            task.spawn(
+                function()
+                    local a = game.Players.LocalPlayer
+                    local b = require(a.PlayerScripts.CombatFramework.Particle)
+                    local c = require(game:GetService("ReplicatedStorage").CombatFramework.RigLib)
+                    if not shared.orl then
+                        shared.orl = c.wrapAttackAnimationAsync
+                    end
+                    if not shared.cpc then
+                        shared.cpc = b.play
+                    end
+                    if tjw1 then
+                        pcall(
+                            function()
+                                c.wrapAttackAnimationAsync = function(d, e, f, g, h)
+                                    local i = c.getBladeHits(e, f, g)
+                                    if i then
+                                        b.play = function()
+                                        end
+                                        d:Play(15.25, 15.25, 15.25)
+                                        h(i)
+                                        b.play = shared.cpc
+                                        wait(0)
+                                        d:Stop()
+                                    end
+                                end
+                            end
+                        )
+                    end
+                end
+            )
+            
+            
+            
+            local CameRa = require(game:GetService("Players").LocalPlayer.PlayerScripts.CombatFramework.CameraShaker)
+            CameRa.CameraShakeInstance.CameraShakeState = {FadingIn = 3,FadingOut = 2,Sustained = 0,Inactive =1}
+            
+            local Client = game.Players.LocalPlayer
+            local STOP = require(Client.PlayerScripts.CombatFramework.Particle)
+            local STOPRL = require(game:GetService("ReplicatedStorage").CombatFramework.RigLib)
+            task.spawn(function()
+                pcall(function()
+                    if not shared.orl then
+                        shared.orl = STOPRL.wrapAttackAnimationAsync
+                    end
+                        if not shared.cpc then
+                            shared.cpc = STOP.play 
+                        end
+                    spawn(function()
+                  require(game.ReplicatedStorage.Util.CameraShaker):Stop()
+                        game:GetService("RunService").Stepped:Connect(function()
+                            STOPRL.wrapAttackAnimationAsync = function(a,b,c,d,func)
+                                local Hits = STOPRL.getBladeHits(b,c,d)
+                                if Hits then
+                                    if  _G.FastAttackNormalSpeed then
+                                        STOP.play = function() end
+                                        a:Play(10.1,9.1,8.1)
+                                        func(Hits)
+                                        STOP.play = shared.cpc
+                                        wait(a.length * 10.5)
+                                        a:Stop()
+                                    else
+                                        func(Hits)
+                                        STOP.play = shared.cpc
+                                        wait(a.length * 10.5)
+                                        a:Stop()
+                                    end
+                                end
+                            end
+                        end)
+                    end)
+                end)
+                end)
+end
+})
+
+section:Toggle({
+   Text = "BringMob[ยังใช้ไม่ได้]",
+   State = false,
+   Callback = function(value) 
+_G.BringMob = value
+
+end
+})
+
+
+
+local column = tabsection:AddColumn({
+   Title = "Stats"
+})
+
+local section = column:Section({
+   Title = "AutoStats"
+})
+
+
+section:TextLabel({
+   Text = "Stats"
+})
+
+section:Toggle({
+   Text = "AutoStats[ยังใช้ไม่ได้]",
+   State = false,
+   Callback = function(value) 
+_G.AutoStats = value
+
+end
+})
+
+
+section:Divide({})
+
+
+section:Dropdown({
+   Text = "Select",
+   List = {'Melee', 'Defense', 'Sword', 'Gun', 'Fruit'},
+   Callback = function() end
+})
+
+section:Slider({
+   Text = "Points",
+   Min = 0,
+   Max = 30,
+   Def = 3,
+   Callback = function() end
+})
+
+local column = tabsection:AddColumn({
+   Title = "Teleport"
+})
+
+local section = column:Section({
+   Title = "Sea 1 [TEST]"
+})
+
+section:Button({
+   Text = "Starter",
+   Callback = function(value)
+   game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(1046.5977783203125, 16.616811752319336, 1433.72412109375)
+   wait(0.1)
+   game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(1046.5977783203125, 16.616811752319336, 1433.72412109375)
+   wait()
+   game.Players.LocalPlayer.Character.Humanoid.Health = 0
+   end
+})
+
+section:Button({
+   Text = "Jungle",
+   Callback = function(value)
+   game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-1346.8265380859375, 12.195302963256836, 437.8760681152344)
+   wait(0.1)
+   game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-1346.8265380859375, 12.195302963256836, 437.8760681152344)
+   wait()
+   game.Players.LocalPlayer.Character.Humanoid.Health = 0
+   end
+})
+
+local column = tabsection:AddColumn({
+   Title = "Mice"
+})
+
+local section = column:Section({
+   Title = "TEST"
+})
+
+section:Button({
+   Text = "JoinPirates",
+   Callback = function(value)
+local args = {
+    [1] = "SetTeam",
+    [2] = "Pirates"
+}
+
+game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
+end
+})
+
+section:Button({
+   Text = "JoinMarines",
+   Callback = function(value)
+    local args = {
+    [1] = "SetTeam",
+    [2] = "Marines"
+}
+
+game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
+end
+})
+
+section:Toggle({
+   Text = "WhiteScreen",
+   State = false,
+   Callback = function(value) 
+_G.White_Screen = value
+spawn(function()
+	while wait() do
+		if _G.White_Screen then
+			game:GetService("RunService"):Set3dRenderingEnabled(false)
+		else
+			game:GetService("RunService"):Set3dRenderingEnabled(true)
+		end
+	end
+end)
+end
+})
+
+local column = tabsection:AddColumn({
+   Title = "Find Mirage"
+})
+
+local section = column:Section({
+   Title = "Auto Find Mirage Island [Beta]"
+})
+
+section:Toggle({
+   Text = "Find[Only Boat gamepass]",
+   State = false,
+   Callback = function(value) 
+_G.Find = value
+if _G.Find then
+
+local args = {
+    [1] = "requestEntrance",
+    [2] = Vector3.new(-12463.6025390625, 378.3270568847656, -7566.0830078125)
+}
+
+game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
+
+wait(2)
+
+local TweenService = game:GetService("TweenService")
+local Tw = TweenService:Create(game.Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(2, Enum.EasingStyle.Linear, Enum.EasingDirection.Out,0,false,0), 
+{CFrame = CFrame.new(-6122.69727, 16.4465427, -2249.85205, -0.30880475, 7.79861438e-08, 0.951125443, -5.05267721e-08, 1, -9.83982247e-08, -0.951125443, -7.84431364e-08, -0.30880475)}):Play()
+
+wait(3)
+
+local args = {
+    [1] = "BuyBoat",
+    [2] = "Enforcer"
+}
+
+game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer(unpack(args))
+
+wait(1)
+
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-6153.63427734375, 1.1416267156600952, -2204.593505859375)
+
+wait(1)
+
+game:GetService("VirtualInputManager"):SendKeyEvent(true,"S",false,game)
+wait(0.1)
+game:GetService("VirtualInputManager"):SendKeyEvent(false,"S",false,game)
+
+wait(0.5)
+
+game:GetService("VirtualInputManager"):SendKeyEvent(true,"W",false,game)
+wait(25)
+game:GetService("VirtualInputManager"):SendKeyEvent(false,"W",false,game)
+
+end
+end
+})
+
+local section = column:Section({
+   Title = "Moon Stat"
+})
+
+section:Button({
+   Text = "Moon Stat",
+   Callback = function(value)
+           task.spawn(function()
+            while task.wait() do
+                pcall(function()
+                    if game:GetService("Lighting").Sky.MoonTextureId=="http://www.roblox.com/asset/?id=9709149431" then
+                        FM:SetText("🌑 : Full Moon 100%")
+                    elseif game:GetService("Lighting").Sky.MoonTextureId=="http://www.roblox.com/asset/?id=9709149052" then
+                        FM:SetText("🌒 : Full Moon 75%")
+                    elseif game:GetService("Lighting").Sky.MoonTextureId=="http://www.roblox.com/asset/?id=9709143733" then
+                        FM:SetText("🌓 : Full Moon 50%")
+                    elseif game:GetService("Lighting").Sky.MoonTextureId=="http://www.roblox.com/asset/?id=9709150401" then
+                        FM:SetText("🌗 : Full Moon 25%")
+                    elseif game:GetService("Lighting").Sky.MoonTextureId=="http://www.roblox.com/asset/?id=9709149680" then
+                        FM:SetText("🌖 : Full Moon 15%")
+                    else
+                        FM:SetText("🌚 : Full Moon 0%")
+                    end
+                end)
+            end
+        end)
+end
+})
+
+--antiafk
+
+local player = game.Players.LocalPlayer
+local lastMove = tick()
+
+-- Function that checks if the player has moved recently
+local function checkAFK()
+    if tick() - lastMove > 600 then -- 10 minutes
+        player.Character:BreakJoints()
+        print("Player has been kicked for being AFK.")
+    end
+end
+
+-- Connect the function to the player's character added event
+player.CharacterAdded:Connect(function()
+    -- When the player's character is added, reset the lastMove timer
+    lastMove = tick()
+    -- Connect the checkAFK function to the player's character's humanoid's running event
+    player.Character.Humanoid.Running:Connect(function()
+        lastMove = tick()
+    end)
+end)
+
+-- Repeatedly call the checkAFK function every 60 seconds
+while true do
+    checkAFK()
+    wait(60)
+end
