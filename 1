@@ -26,6 +26,43 @@ local section = column:Section({
    Title = "AutoFarm"
 })
 
+section:Button({
+   Text = "RedeamCode",
+   Callback = function(value)
+   function UseCode(Text)
+                    game:GetService("ReplicatedStorage").Remotes.Redeem:InvokeServer(Text)
+                    end
+                    UseCode("TY_FOR_WATCHING")
+                    UseCode("GAMER_ROBOT_1M")
+                    UseCode("ADMINGIVEAWAY")
+                    UseCode("GAMERROBOT_YT")
+                    UseCode("kittgaming")
+                    UseCode("Sub2Fer999")
+                    UseCode("Enyu_is_Pro")
+                    UseCode("Magicbus")
+                    UseCode("JCWK")
+                    UseCode("Starcodeheo")
+                    UseCode("Bluxxy")
+                    UseCode("fudd10_v2")
+                    UseCode("UB2GAMERROBOT_EXP1")
+                    UseCode("Sub2NoobMaster123")
+                    UseCode("Sub2Daigrock")
+                    UseCode("Axiore")
+                    UseCode("TantaiGaming")
+                    UseCode("StrawHatMaine")
+                    UseCode("Sub2OfficialNoobie")
+                    UseCode("TheGreatAce")
+                    UseCode("Fudd10")
+                    UseCode("Bignews")
+                    UseCode("Sub2UncleKizaru")
+                    UseCode("SUB2GAMERROBOT_RESET1")
+                    UseCode("SUBGAMERROBOT_RESET")
+                    UseCode("NOOB_REFUND")
+                    UseCode("SUB2GAMERROBOT_EXP1")
+                    
+   end
+})
+
 section:Toggle({
    Text = "FarmBone[soon]",
    State = false,
@@ -430,35 +467,6 @@ wait(25)
 game:GetService("VirtualInputManager"):SendKeyEvent(false,"W",false,game)
 
 end
-end
-})
-
-local section = column:Section({
-   Title = "Moon Stat"
-})
-
-section:Button({
-   Text = "Moon Stat",
-   Callback = function(value)
-           task.spawn(function()
-            while task.wait() do
-                pcall(function()
-                    if game:GetService("Lighting").Sky.MoonTextureId=="http://www.roblox.com/asset/?id=9709149431" then
-                        FM:SetText("🌑 : Full Moon 100%")
-                    elseif game:GetService("Lighting").Sky.MoonTextureId=="http://www.roblox.com/asset/?id=9709149052" then
-                        FM:SetText("🌒 : Full Moon 75%")
-                    elseif game:GetService("Lighting").Sky.MoonTextureId=="http://www.roblox.com/asset/?id=9709143733" then
-                        FM:SetText("🌓 : Full Moon 50%")
-                    elseif game:GetService("Lighting").Sky.MoonTextureId=="http://www.roblox.com/asset/?id=9709150401" then
-                        FM:SetText("🌗 : Full Moon 25%")
-                    elseif game:GetService("Lighting").Sky.MoonTextureId=="http://www.roblox.com/asset/?id=9709149680" then
-                        FM:SetText("🌖 : Full Moon 15%")
-                    else
-                        FM:SetText("🌚 : Full Moon 0%")
-                    end
-                end)
-            end
-        end)
 end
 })
 
